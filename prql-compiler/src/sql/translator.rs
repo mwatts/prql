@@ -806,6 +806,49 @@ mod test {
     }
 
     #[test]
+    fn test_stdlib() {
+        let query: Query = parse(
+            r###"
+        from employees
+        aggregate (
+          [salary_usd = min salary]
+        )
+        "###,
+        )
+        .unwrap();
+
+        let sql = resolve_and_translate(query).unwrap();
+        assert_snapshot!(sql,
+            @r###"
+        SELECT
+          MIN(salary) AS salary_usd
+        FROM
+          employees
+        "###
+        );
+
+        let query: Query = parse(
+            r###"
+        from employees
+        aggregate (
+          [salary_usd = (round salary 2)]
+        )
+        "###,
+        )
+        .unwrap();
+
+        let sql = resolve_and_translate(query).unwrap();
+        assert_snapshot!(sql,
+            @r###"
+        SELECT
+          ROUND(salary, 2) AS salary_usd
+        FROM
+          employees
+        "###
+        );
+    }
+
+    #[test]
     fn test_range_of_ranges() -> Result<()> {
         let range1 = Range::from_ints(Some(1), Some(10));
         let range2 = Range::from_ints(Some(5), Some(6));
@@ -1467,6 +1510,23 @@ take 20
 
         assert!(resolve_and_translate(query).is_err());
 
+        let query: Query = parse(
+            r###"
+        from events
+        filter (date | in @1776-07-04..@1787-09-17)
+        "###,
+        )?;
+
+        assert_display_snapshot!((resolve_and_translate(query)?), @r###"
+        SELECT
+          events.*
+        FROM
+          events
+        WHERE
+          date BETWEEN DATE '1776-07-04'
+          AND DATE '1787-09-17'
+        "###);
+
         Ok(())
     }
 
@@ -2041,7 +2101,7 @@ take 20
         WITH table_0 AS (
           SELECT
             employees.*,
-            ROW NUMBER() OVER (PARTITION BY department) AS _rn
+            ROW_NUMBER() OVER (PARTITION BY department) AS _rn
           FROM
             employees
         )
@@ -2061,7 +2121,7 @@ take 20
         WITH table_0 AS (
           SELECT
             employees.*,
-            ROW NUMBER() OVER (
+            ROW_NUMBER() OVER (
               PARTITION BY department
               ORDER BY
                 salary

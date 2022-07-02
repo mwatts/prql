@@ -1,13 +1,13 @@
 [book]
 authors = ["aljazerzen"]
-description = "Modern language for transforming data — a simpler and more powerful SQL"
+description = "Modern language for transforming data — a simple, powerful, pipelined SQL replacement"
 language = "en"
 multilingual = false
 src = "src"
 title = "PRQL Language Book"
 
 [output.html]
-additional-css = ["comparison-table.css", "././mdbook-admonish.css"]
+additional-css = ["comparison-table.css", "mdbook-admonish.css"]
 additional-js = ["highlight-prql.js"]
 git-repository-url = "https://github.com/prql/prql"
 
@@ -21,10 +21,6 @@ command = "sh -c 'echo \"Installing mdbook-prql from mdbook\" 1>&2; cd $(git rev
 
 [preprocessor.prql]
 
-[preprocessor.toc]
-command = "mdbook-toc"
-renderer = ["html"]
-
 [preprocessor.admonish]
-assets_version = "1.0.0" # do not edit: managed by `mdbook-admonish install`
+assets_version = "2.0.0" # do not edit: managed by `mdbook-admonish install`
 command = "mdbook-admonish"

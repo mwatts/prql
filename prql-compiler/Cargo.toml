@@ -1,11 +1,11 @@
 [package]
-description = "PRQL is a modern language for transforming data — a simpler and more powerful SQL."
+description = "PRQL is a modern language for transforming data — a simple, powerful, pipelined SQL replacement."
 edition = "2021"
 license = "Apache-2.0"
 name = "prql-compiler"
 repository = "https://github.com/prql/prql"
 rust-version = "1.59.0"
-version = "0.1.1"
+version = "0.2.1"
 
 [features]
 # We previously had `cli` not compile by default, because of an issue with

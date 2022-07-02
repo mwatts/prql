@@ -2,7 +2,24 @@
 title: "FAQ"
 ---
 
-## This reminds me of something else, did you take the idea from them?
+## Cool story Hansel, but what can I actually do with PRQL now?
+
+We're still early, and the opportunities for using PRQL are focused on two
+integrations:
+
+- **[dbt-prql](https://github.com/prql/dbt-prql)** allows writing PRQL in
+  [dbt](https://www.getdbt.com/) models. It very simple to use — install
+  `dbt-prql` with pip, and then any text between a `{% prql %}` & `{% endprql %}` tag is compiled from PRQL.
+- **[Jupyter](https://pyprql.readthedocs.io/en/latest/magic_readme.html)**
+  allows writing PRQL in a Jupyter notebook or IPython repl, with a `%%prql`
+  magic. As well as connecting to existing DBs, our integration with DuckDB
+  enables querying pandas dataframes, CSVs & Parquet files, and writing the
+  output to a dataframe.
+
+Beyond these two integrations, it's very easy to add PRQL to your own apps with
+our [bindings](../content/_index.md#Bindings), for Rust, Python & JS.
+
+## Something here reminds me of another project, did you take the idea from them?
 
 Yes, probably. We're standing on the shoulders of giants:
 
@@ -82,7 +99,17 @@ is questionable logic, "`n` languages have tried and failed so therefore SQL
 cannot be improved." suffers a similar fallacy. SQL isn't bad because it's old.
 It's bad because — in some cases — it's bad.
 
-## What's going on with this weird `aggregate` syntax? What's wrong with `SELECT` & `GROUP BY`?
+## Which databases does PRQL work with?
+
+PRQL compiles to SQL, so it's compatible with any database that accepts SQL.
+
+A query's dialect can be explicitly specified, allowing for dialect-specific SQL
+to be generated. See the [Dialect
+docs](https://prql-lang.org/book/queries/dialect_and_version.html) for more
+info; note that there is currently very limited implementation of this, and most
+dialects' implementation are identical to a generic implementation.
+
+## What's going on with this `aggregate` function? What's wrong with `SELECT` & `GROUP BY`?
 
 SQL uses `SELECT` for all of these:
 
@@ -106,7 +133,7 @@ SQL uses `SELECT` for all of these:
 
 These are not orthogonal — `SELECT` does lots of different things depending on
 the context. It's difficult for both people and machines to evaluate the shape
-of the output. It's easy to mix meanings and raise an error (`SELECT x, MIN(y) FROM z`).
+of the output. It's easy to mix meanings and raise an error (e.g. `SELECT x, MIN(y) FROM z`).
 
 PRQL clearly delineates two operations with two transforms:
 
@@ -137,6 +164,14 @@ group department (
 )
 ```
 
-<!-- TODO: could add in comments from @hadley around "one of his biggest regrets" to dplyr -->
+While you should be skeptical of new claims from new entrants, but [Hadley
+Wickham](https://twitter.com/hadleywickham), the developer of
+[Tidyverse](https://www.tidyverse.org/)
+[commented](https://news.ycombinator.com/item?id=30067406) in a discussion on
+PRQL:
+
+> FWIW the separate `group_by()` is one of my greatest design regrets with dplyr
+> — I wish I had made `by` a parameter of `summarise()`, `mutate()`, `filter()`
+> etc.
 
 For more detail, check out the docs in the [PRQL Book](https://prql-lang.org/book).

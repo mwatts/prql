@@ -1452,6 +1452,51 @@ select [
     }
 
     #[test]
+    fn test_parse_backticks() -> Result<()> {
+        let prql = "
+from `a`
+aggregate [max c]
+join `my-proj.dataset.table`
+join `my-proj`.`dataset`.`table`
+";
+        assert_yaml_snapshot!(parse(prql)?, @r###"
+        ---
+        version: ~
+        dialect: Generic
+        nodes:
+          - Pipeline:
+              nodes:
+                - FuncCall:
+                    name: from
+                    args:
+                      - Ident: "`a`"
+                    named_args: {}
+                - FuncCall:
+                    name: aggregate
+                    args:
+                      - List:
+                          - FuncCall:
+                              name: max
+                              args:
+                                - Ident: c
+                              named_args: {}
+                    named_args: {}
+                - FuncCall:
+                    name: join
+                    args:
+                      - Ident: "`my-proj.dataset.table`"
+                    named_args: {}
+                - FuncCall:
+                    name: join
+                    args:
+                      - Ident: "`my-proj`.`dataset`.`table`"
+                    named_args: {}
+        "###);
+
+        Ok(())
+    }
+
+    #[test]
     fn test_parse_sort() -> Result<()> {
         assert_yaml_snapshot!(parse("
         from invoices
@@ -1526,6 +1571,8 @@ select [
           less_than_ten = ..9,
           negative = (-5..),
           more_negative = -10..,
+          dates_open = @2020-01-01..,
+          dates = @2020-01-01..@2021-01-01,
         ]
         ").unwrap(), @r###"
         ---
@@ -1593,6 +1640,24 @@ select [
                                     Literal:
                                       Integer: -10
                                   end: ~
+                          - Assign:
+                              name: dates_open
+                              expr:
+                                Range:
+                                  start:
+                                    Literal:
+                                      Date: 2020-01-01
+                                  end: ~
+                          - Assign:
+                              name: dates
+                              expr:
+                                Range:
+                                  start:
+                                    Literal:
+                                      Date: 2020-01-01
+                                  end:
+                                    Literal:
+                                      Date: 2021-01-01
                     named_args: {}
         "###);
     }
