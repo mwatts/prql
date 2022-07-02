@@ -8,10 +8,10 @@ mod tests {
 
     #[test]
     fn test() {
-        
+
         let mut pg_client = postgres::connect();
         let sqlite_conn = sqlite::connect();
-        
+
         // for each of the queries
         glob!("queries/**/*.prql", |path| {
             // read
