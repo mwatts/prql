@@ -8,7 +8,6 @@ mod tests {
 
     #[test]
     fn test() {
-
         let mut pg_client = postgres::connect();
         let sqlite_conn = sqlite::connect();
 
@@ -35,7 +34,7 @@ mod tests {
 
     mod sqlite {
         use rusqlite::{types::ValueRef, Connection};
-        use std::{path::Path};
+        use std::path::Path;
 
         pub fn connect() -> Connection {
             let path = Path::new("./chinook.db");
@@ -75,9 +74,9 @@ mod tests {
     mod postgres {
         use std::time::SystemTime;
 
+        use chrono::{DateTime, Utc};
         use postgres::types::{FromSql, Type};
         use postgres::{Client, NoTls, Row};
-        use chrono::{DateTime, Utc};
 
         pub fn connect() -> Option<Client> {
             let host = std::env::var("POSTGRES_HOST").ok()?;
